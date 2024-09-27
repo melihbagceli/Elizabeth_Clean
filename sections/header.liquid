@@ -1,3 +1,5 @@
+{% assign main_menu_linklist = linklists[section.settings.menu] %}
+
 <div class="relative bg-white">
   <div class="mx-auto px-4 sm:px-6" x-data="{ mobileMenuOpen: false }">
     <div class="flex justify-between items-center py-6 md:justify-start md:space-x-10">
@@ -27,7 +29,7 @@
             <!-- MOBILE MENU HEADER TITLE PLUS CLOSE BUTTON -->
             <div class="flex items-center justify-between pb-3">
               <div>
-                <h1 class="text-lg text-gray-500">MENU</h1>
+                <h1 class="text-lg text-gray-500">{{ section.settings.mobile_menu_title }}</h1>
               </div>
               <div class="-mr-2">
                 <button x-on:click="mobileMenuOpen = false" type="button" class="bg-white rounded-md p-2 text-gray-500">
@@ -39,7 +41,7 @@
             <!-- NAVIGATION LINKS FOR MOBILE MENU -->
             <div class="pt-3">
               <nav class="grid gap-y-7">
-                {% for link in linklists['main-menu'].links %}
+                {% for link in main_menu_linklist.links %}
                   {% if link.links != blank %}
                     <div
                       class="relative"
@@ -82,7 +84,7 @@
 
       <!-- NAVIGATION MENU -->
       <nav x-data="{open: false}" class="hidden md:flex space-x-10">
-        {% for link in linklists['main-menu'].links %}
+        {% for link in main_menu_linklist.links %}
           {% if link.links != blank %}
             <div class="relative">
               <button
@@ -126,9 +128,33 @@
         <a href="{{ routes.cart_url }}" class="whitespace-nowrap text-base text-gray-500 hover:text-gray-900">
           {% render 'icon-shopping-bag' %}
         </a>
-        <a href="{{ routes.account_login_url }}" class="text-base text-gray-500 hover:text-gray-900">Login</a>
-        <a href="{{ routes.account_register_url }}" class="text-base text-gray-500 hover:text-gray-900">Register</a>
+        {% if shop.customer_accounts_enabled %}
+          <a href="{{ routes.account_login_url }}" class="text-base text-gray-500 hover:text-gray-900">Login</a>
+          <a href="{{ routes.account_register_url }}" class="text-base text-gray-500 hover:text-gray-900">Register</a>
+        {% endif %}
       </div>
     </div>
   </div>
 </div>
+
+{% schema %}
+{
+  "name": "Navigational Bar",
+  "settings": [
+    {
+      "type": "text",
+      "id": "mobile_menu_title",
+      "label": "Mobile Menu Title",
+      "default": "Menu",
+      "info": "This is mobile menu window"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Header Menu",
+      "default": "main-menu",
+      "info": "Change Menu"
+    }
+  ]
+}
+{% endschema %}
