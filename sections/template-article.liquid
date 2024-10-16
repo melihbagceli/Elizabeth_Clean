@@ -1,3 +1,4 @@
+{% assign comment_per_page = 5 %}
 <article>
   {% for block in section.blocks %}
     {% case block.type %}
@@ -39,13 +40,40 @@
 
 {% if blog.comments_enabled? %}
   <div id="comments" class="my-8">
-    {%- if article.comments_count > 0 -%}
+    {%- if article.comments_count > 0 %}
+      <h1>See What People are Saying</h1>
+      {% paginate article.comments by comment_per_page -%}
+        {% for comment in article.comments %}
+          Author: {{ comment.author }} Published: {{ comment.created_at | date: format: 'default' }}
+          <br>
+          Content: {{ comment.content }}
+        {% endfor %}
+        {% if paginate.pages > 1 %}
+          {{ paginate | default_pagination }}
+        {%- endif -%}
+      {% endpaginate %}
+
     {%- else -%}
       <p class="text-center">There are no comments in this article</p>
     {%- endif -%}
   </div>
   <div id="comment_form" class="mb-8">
     {%- form 'new_comment', article -%}
+      {%- if form.errors -%}
+        {%- render 'icon-failed' -%}
+        Your comments not posted !
+        <ul>
+          {%- for error in form.errors -%}
+            {{ form.errors.messages[error] }}
+          {%- endfor -%}
+        </ul>
+      {%- elsif form.posted_successfully? -%}
+        <div class="flex p-2">
+          {%- render 'icon-success' -%}
+          Your comments posted successfully.
+        </div>
+      {%- endif -%}
+      <br>
       <label for="comment_author">Name</label>
       <input required type="text" name="comment[author]" id="comment_author" class="border-2 border-sky-500">
       <label for="comment_email">Email</label>
