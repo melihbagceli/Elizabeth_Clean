@@ -1,0 +1,13 @@
+{%- if product.featured_image -%}
+  <img
+    src="{{ product.featured_image | image_url: width: 500}}"
+    width="auto"
+    height="{{ product.featured_image.height }}"
+    alt=""
+  >
+{%- else -%}
+  {{ 'product-1' | placeholder_svg_tag: 'w-full' }}
+{%- endif -%}
+<span>{{ product.vendor }}</span>
+<a href="{{ product.url }}"> {{ product.title }}</a>
+<p>{{ product.price | money }}</p>
